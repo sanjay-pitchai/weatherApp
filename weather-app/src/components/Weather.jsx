@@ -1,69 +1,116 @@
-import React from "react";
-import {BsCloud} from 'react-icons/bs';
+import React, { useEffect } from "react";
+// import {BsCloud} from 'react-icons/bs';
 import {FaWind} from 'react-icons/fa';  
 import { FaLocationDot } from "react-icons/fa6";
 import {BiSearch} from 'react-icons/bi';
-import { MdOutlineMyLocation } from "react-icons/md";
+// import { MdOutlineMyLocation } from "react-icons/md";
+import { fetchForecastByCity } from "../redux/weatherSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Weather() {
+
+    const[city, setCity] = React.useState("");
+    const handleSearch = () => {
+        if(city.trim() !== "")
+            dispatch(fetchForecastByCity(city));
+    }
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchForecastByCity("New York"));
+    }, [dispatch]);
+
+    const forecast = useSelector((state) => state.weather.forecast);
+    console.log(forecast);
+
+    const forecastHours = forecast?.forecast?.forecastday[0]?.hour.slice(0, 10);
+
   return (
     <div className="weather-container">
         <div className="main-section">
             <div className="weather-info">
                 <div className="location">
-                    <h3>{/*<MdOutlineMyLocation className="icon"/>*/}New York - USA</h3>
+                    <h3>{/*<MdOutlineMyLocation className="icon"/>*/}{forecast?.location?.name} - {forecast?.location?.country}</h3>
                 </div>
                 <div className="condition">
-                    <h1>Overcast</h1>
+                    <h1>{forecast?.current?.condition?.text}</h1>
                 </div>
             </div>
             <div className="weather-hours">
-                <div className="hour-card">
-                    <div className="hour-time">
-                        <p>12:00</p>
-                    </div>
-                    <div className="hour-condition">
-                        <BsCloud   />
-                    </div>
-                    <div className="hour-temp">
-                        <h2>10°C</h2>
-                    </div>
-                </div>
+                {forecastHours?.map((hour, index) => {
+                    
+                    const time = new Date(hour.time).toLocaleTimeString("en-US",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false
+                        });
+
+                    return (
+                        <div className="hour-card" key={index}>
+                            <div className="hour-time">
+                                <p>{time}</p>
+                            </div>
+                            <div className="hour-condition">
+                                {/* <BsCloud   /> */}
+                                <img src={hour?.condition?.icon} alt=""/>
+                            </div>
+                            <div className="hour-temp">
+                                <h2>{Math.ceil(hour?.temp_c)}°C</h2>
+                            </div>
+                        </div>
+                    )}
+                )}
             </div>
         </div>
         <div className="side-section">
             <div className="search-box">
                 <FaLocationDot  className="icon"/>
-                <input type="text" placeholder="New York"/>
-                <BiSearch  className="icon"/>
+                <input type="text" placeholder={forecast?.location?.name} value={city} onChange={(e)=> setCity(e.target.value)}/>
+                <BiSearch  className="icon" onClick={handleSearch}/>
             </div>
             
             <div className="temp-info">
-                <h2>10°C</h2>
+                <h2>{Math.ceil(forecast?.current?.temp_c)}°C</h2>
                 <p>
-                    <FaWind /> NE 40 km/h
+                    <FaWind /> {forecast?.current?.wind_dir} {" "} {forecast?.current?.wind_kph} km/h
                 </p>
             </div>
 
             <div className="forecast-days">
                 <h1 className="forecast-heading">The Next Days Forecast</h1>
-                <div className="forecast-item">
-                    <div className="forecast-details">
-                        <div className="forecast-icon">
-                            {/* <BsCLoud /> */}
-                        </div>
-                        <div className="details">    
-                            <h2>Monday, December 3</h2>
-                            <p>Overcast</p>
-                        </div>
-                    </div>
-                    <div className="forecast-temp">
-                        <div className="temp-display">
-                            <h2>10°C</h2>
-                            <h2>5°C</h2>
-                        </div>
-                    </div>
-                </div>
+                {
+                    forecast?.forecast?.forecastday?.map((item, index) => {
+
+                        const forecastDate = new Date(item.date).toLocaleDateString("en-US",
+                            {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "long"
+                            });
+
+                        return(    
+                            <div className="forecast-item" key ={index}>
+                                <div className="forecast-details">
+                                    <div className="forecast-icon">
+                                        {/* <BsCloud className="icon"/> */}
+                                        <img src={item?.day?.condition?.icon} alt=""/>
+                                    </div>
+                                    <div className="details">    
+                                        <h2>{forecastDate}</h2>
+                                        <p>{item?.day?.condition?.text}</p>
+                                    </div>
+                                </div>
+                                <div className="forecast-temp">
+                                    <div className="temp-display">
+                                        <h2>{Math.ceil(item.day.maxtemp_c)}°C</h2>
+                                        <h2>{Math.ceil(item.day.mintemp_c)}°C</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+            )}
             </div>
         </div>
     </div>

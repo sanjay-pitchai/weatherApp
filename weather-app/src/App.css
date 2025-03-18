@@ -128,6 +128,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-size: 45px;
+  color:aliceblue;
   align-items: center;
   border-bottom: 2px solid #a0a7a7;
   padding-bottom: 40px;
