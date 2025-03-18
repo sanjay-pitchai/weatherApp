@@ -6,6 +6,10 @@ import {BiSearch} from 'react-icons/bi';
 // import { MdOutlineMyLocation } from "react-icons/md";
 import { fetchForecastByCity } from "../redux/weatherSlice";
 import { useDispatch, useSelector } from "react-redux";
+import sunny from '../assets/sunny.jpg';
+import cloudy from '../assets/cloud.jpg';
+import rainy from '../assets/rain.jpg';
+import snow from '../assets/snow.jpg';
 
 function Weather() {
 
@@ -26,8 +30,32 @@ function Weather() {
 
     const forecastHours = forecast?.forecast?.forecastday[0]?.hour.slice(0, 10);
 
+    const weatherCondition = forecast?.current?.condition?.text?.toLowerCase();
+
+    let background = sunny;
+
+    if(weatherCondition){
+        if(weatherCondition.includes("clear") || weatherCondition.includes("sunny") || weatherCondition.includes("fair")){
+            background = sunny;
+        }
+        else if(weatherCondition.includes("rain") || weatherCondition.includes("shower") || weatherCondition.includes("drizzle")){
+            background = rainy;
+        }
+        else if(weatherCondition.includes("cloud") || weatherCondition.includes("overcast")){
+            background = cloudy;
+        }
+        else if(weatherCondition.includes("snow")){
+            background = snow;
+        }
+    }
+
   return (
-    <div className="weather-container">
+    <div className="weather-container"
+        style={{
+            backgroundImage: `url(${background})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+        }}> 
         <div className="main-section">
             <div className="weather-info">
                 <div className="location">
