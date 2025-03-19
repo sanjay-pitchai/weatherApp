@@ -95,7 +95,13 @@ function Weather() {
         <div className="side-section">
             <div className="search-box">
                 <FaLocationDot  className="icon"/>
-                <input type="text" placeholder={forecast?.location?.name} value={city} onChange={(e)=> setCity(e.target.value)}/>
+                <input type="text" placeholder={forecast?.location?.name} value={city} 
+                    onChange={(e)=> setCity(e.target.value)}
+                    onKeyDown= {(e) => {
+                        if(e.key === 'Enter'){
+                            {handleSearch};
+                    }}
+                />                
                 <BiSearch  className="icon" onClick={handleSearch}/>
             </div>
             
