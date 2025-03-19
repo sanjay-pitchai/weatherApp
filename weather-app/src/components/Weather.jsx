@@ -99,7 +99,7 @@ function Weather() {
                     onChange={(e)=> setCity(e.target.value)}
                     onKeyDown= {(e) => {
                         if(e.key === 'Enter'){
-                            {handleSearch};
+                            {handleSearch};}
                     }}
                 />                
                 <BiSearch  className="icon" onClick={handleSearch}/>
