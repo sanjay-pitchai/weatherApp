@@ -17,6 +17,7 @@ function Weather() {
     const handleSearch = () => {
         if(city.trim() !== "")
             dispatch(fetchForecastByCity(city));
+        setCity("");
     }
 
     const dispatch = useDispatch();
@@ -95,7 +96,8 @@ function Weather() {
         <div className="side-section">
             <div className="search-box">
                 <FaLocationDot  className="icon"/>
-                <input type="text" placeholder={forecast?.location?.name} value={city} 
+                {/* <input type="text" placeholder={forecast?.location?.name} value={city}  */}
+                <input type="text" placeholder={"Enter a city"} value={city} 
                     onChange={(e)=> setCity(e.target.value)}
                     onKeyDown= {(e) => {
                         if(e.key === 'Enter'){
